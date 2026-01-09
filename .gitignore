@@ -45,6 +45,7 @@ dist/
 *.json
 !package.json
 !manifest.json
+!vercel.json
 
 # =======================================================
 # IDE & SYSTEM
