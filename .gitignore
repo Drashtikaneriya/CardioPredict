@@ -1,0 +1,59 @@
+# =======================================================
+# PYTHON & FLASK
+# =======================================================
+# Ignore Python cache files (compiled bytecode)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore Virtual Environments (where you installed pip libraries)
+venv/
+env/
+.venv/
+
+# Ignore Environment Variables (Secrets, API keys, Passwords)
+.env
+.flaskenv
+
+# =======================================================
+# REACT & FRONTEND
+# =======================================================
+# Ignore Node Modules (Heavy library folder, re-installable with npm install)
+node_modules/
+
+# Ignore Build/Production output
+build/
+dist/
+
+# Ignore local dependency cache
+.npm
+.eslintcache
+
+# =======================================================
+# MACHINE LEARNING
+# =======================================================
+# Ignore Large Model Files (Too big for GitHub)
+*.pkl
+*.joblib
+*.h5
+*.pth
+*.onnx
+
+# Ignore Datasets (Usually privacy-sensitive or large)
+*.csv
+*.xlsx
+*.json
+!package.json
+!manifest.json
+
+# =======================================================
+# IDE & SYSTEM
+# =======================================================
+# VS Code settings (optional, but good to ignore if personal)
+.vscode/
+
+# Mac OS metadata
+.DS_Store
+
+# Windows metadata
+Thumbs.db
