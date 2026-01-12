@@ -9,13 +9,17 @@ import pandas as pd
 from typing import Dict, Tuple, Any
 
 
+import os
+
 class ModelPredictor:
     """Handles all model-related operations"""
     
-    def __init__(self, model_path: str = "cardio_model_lr.pkl"):
+    def __init__(self, model_filename: str = "cardio_model_lr.pkl"):
         self.model = None
         self.scaler = None
-        self.model_path = model_path
+        # Get absolute path to the model file
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        self.model_path = os.path.join(base_path, model_filename)
         self.load_model()
         
     def load_model(self) -> bool:

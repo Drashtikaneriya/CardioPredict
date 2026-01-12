@@ -5,8 +5,10 @@
 
 import axios from 'axios';
 
-// Base URL for API (uses proxy from package.json in development)
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+// Base URL for API
+// In production, this should be your Render backend URL (e.g., https://name.onrender.com/api)
+// In development, it uses the local proxy
+const API_BASE_URL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? 'https://cardiopredict-backend.onrender.com/api' : '/api');
 
 // Create axios instance with default config
 const apiClient = axios.create({

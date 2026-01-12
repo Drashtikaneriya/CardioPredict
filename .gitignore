@@ -34,6 +34,7 @@ dist/
 # =======================================================
 # Ignore Large Model Files (Too big for GitHub)
 *.pkl
+!backend/cardio_model_lr.pkl
 *.joblib
 *.h5
 *.pth

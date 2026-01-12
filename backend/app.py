@@ -11,10 +11,10 @@ import traceback
 # Initialize Flask app
 app = Flask(__name__)
 
-# Enable CORS for React frontend
+# Enable CORS for React frontend (Vercel)
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:3000", "http://localhost:5173"],
+        "origins": "*",
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"]
     }
@@ -32,6 +32,16 @@ except Exception as e:
 # ==========================================
 # API ENDPOINTS
 # ==========================================
+
+@app.route('/', methods=['GET'])
+def index():
+    """Root endpoint for status"""
+    return jsonify({
+        'status': 'online',
+        'message': 'Cardiovascular Prediction API is running',
+        'health_check': '/api/health'
+    }), 200
+
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
