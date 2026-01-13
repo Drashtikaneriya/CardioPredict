@@ -25,6 +25,36 @@ class ModelPredictor:
     def load_model(self) -> bool:
         """Load the trained model and scaler from pickle file"""
         try:
+            # Debug: Print current directory and model path
+            print(f"[DEBUG] Current working directory: {os.getcwd()}")
+            print(f"[DEBUG] Script directory: {os.path.dirname(os.path.abspath(__file__))}")
+            print(f"[DEBUG] Looking for model at: {self.model_path}")
+            print(f"[DEBUG] Model file exists: {os.path.exists(self.model_path)}")
+            
+            # List files in backend directory for debugging
+            backend_dir = os.path.dirname(os.path.abspath(__file__))
+            if os.path.exists(backend_dir):
+                files = os.listdir(backend_dir)
+                print(f"[DEBUG] Files in backend directory: {files}")
+            
+            if not os.path.exists(self.model_path):
+                print(f"[ERROR] Model file not found at {self.model_path}")
+                # Try alternative paths
+                alt_paths = [
+                    "cardio_model_lr.pkl",  # Current directory
+                    os.path.join(os.getcwd(), "cardio_model_lr.pkl"),  # Working directory
+                    os.path.join(os.getcwd(), "backend", "cardio_model_lr.pkl")  # From root
+                ]
+                for alt_path in alt_paths:
+                    print(f"[DEBUG] Trying alternative path: {alt_path}")
+                    if os.path.exists(alt_path):
+                        print(f"[OK] Found model at alternative path: {alt_path}")
+                        self.model_path = alt_path
+                        break
+                else:
+                    print("[ERROR] Model file not found in any location")
+                    return False
+            
             with open(self.model_path, 'rb') as f:
                 data = pickle.load(f)
             
@@ -39,10 +69,14 @@ class ModelPredictor:
                 self.scaler = None
             
             print(f"[OK] Model loaded successfully from {self.model_path}")
+            print(f"[OK] Model type: {type(self.model)}")
+            print(f"[OK] Scaler loaded: {self.scaler is not None}")
             return True
             
         except Exception as e:
             print(f"[ERROR] Error loading model: {e}")
+            import traceback
+            print(traceback.format_exc())
             return False
     
     def validate_input(self, data: Dict) -> Tuple[bool, str]:

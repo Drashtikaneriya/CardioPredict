@@ -186,6 +186,35 @@ def get_info():
     }), 200
 
 
+@app.route('/api/debug', methods=['GET'])
+def debug_info():
+    """
+    Debug endpoint to help diagnose deployment issues
+    Shows file system information and model loading status
+    """
+    import os
+    
+    backend_dir = os.path.dirname(os.path.abspath(__file__))
+    cwd = os.getcwd()
+    
+    debug_data = {
+        'current_working_directory': cwd,
+        'backend_directory': backend_dir,
+        'files_in_cwd': os.listdir(cwd) if os.path.exists(cwd) else [],
+        'files_in_backend': os.listdir(backend_dir) if os.path.exists(backend_dir) else [],
+        'model_file_exists': os.path.exists(os.path.join(backend_dir, 'cardio_model_lr.pkl')),
+        'predictor_initialized': predictor is not None,
+        'model_loaded': predictor is not None and predictor.model is not None,
+        'scaler_loaded': predictor is not None and predictor.scaler is not None,
+    }
+    
+    if predictor:
+        debug_data['model_path'] = predictor.model_path
+        debug_data['model_type'] = str(type(predictor.model)) if predictor.model else None
+    
+    return jsonify(debug_data), 200
+
+
 # ==========================================
 # ERROR HANDLERS
 # ==========================================
