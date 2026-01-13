@@ -32,9 +32,8 @@ dist/
 # =======================================================
 # MACHINE LEARNING
 # =======================================================
-# Ignore Large Model Files (Too big for GitHub)
-*.pkl
-!backend/cardio_model_lr.pkl
+# Allow .pkl files for model deployment
+# *.pkl (commented out to allow model file)
 *.joblib
 *.h5
 *.pth
