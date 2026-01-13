@@ -17,10 +17,31 @@ class ModelPredictor:
     def __init__(self, model_filename: str = "cardio_model_lr.pkl"):
         self.model = None
         self.scaler = None
-        # Get absolute path to the model file
+        
+        # Try multiple possible paths for the model file
+        # Railway deploys backend/ contents to /app, so file is at /app/cardio_model_lr.pkl
         base_path = os.path.dirname(os.path.abspath(__file__))
-        self.model_path = os.path.join(base_path, model_filename)
-        self.load_model()
+        
+        possible_paths = [
+            os.path.join(base_path, model_filename),  # Same directory as script
+            model_filename,  # Current working directory
+            os.path.join(os.getcwd(), model_filename),  # Explicit CWD
+            os.path.join(os.getcwd(), "backend", model_filename),  # From project root
+            f"/app/{model_filename}",  # Railway absolute path
+        ]
+        
+        self.model_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                self.model_path = path
+                print(f"[OK] Found model file at: {path}")
+                break
+        
+        if self.model_path is None:
+            print(f"[ERROR] Model file '{model_filename}' not found in any location")
+            print(f"[DEBUG] Tried paths: {possible_paths}")
+        else:
+            self.load_model()
         
     def load_model(self) -> bool:
         """Load the trained model and scaler from pickle file"""
@@ -28,32 +49,13 @@ class ModelPredictor:
             # Debug: Print current directory and model path
             print(f"[DEBUG] Current working directory: {os.getcwd()}")
             print(f"[DEBUG] Script directory: {os.path.dirname(os.path.abspath(__file__))}")
-            print(f"[DEBUG] Looking for model at: {self.model_path}")
-            print(f"[DEBUG] Model file exists: {os.path.exists(self.model_path)}")
-            
-            # List files in backend directory for debugging
-            backend_dir = os.path.dirname(os.path.abspath(__file__))
-            if os.path.exists(backend_dir):
-                files = os.listdir(backend_dir)
-                print(f"[DEBUG] Files in backend directory: {files}")
+            print(f"[DEBUG] Loading model from: {self.model_path}")
             
             if not os.path.exists(self.model_path):
                 print(f"[ERROR] Model file not found at {self.model_path}")
-                # Try alternative paths
-                alt_paths = [
-                    "cardio_model_lr.pkl",  # Current directory
-                    os.path.join(os.getcwd(), "cardio_model_lr.pkl"),  # Working directory
-                    os.path.join(os.getcwd(), "backend", "cardio_model_lr.pkl")  # From root
-                ]
-                for alt_path in alt_paths:
-                    print(f"[DEBUG] Trying alternative path: {alt_path}")
-                    if os.path.exists(alt_path):
-                        print(f"[OK] Found model at alternative path: {alt_path}")
-                        self.model_path = alt_path
-                        break
-                else:
-                    print("[ERROR] Model file not found in any location")
-                    return False
+                return False
+            
+            print(f"[DEBUG] Model file size: {os.path.getsize(self.model_path)} bytes")
             
             with open(self.model_path, 'rb') as f:
                 data = pickle.load(f)
@@ -61,12 +63,15 @@ class ModelPredictor:
             # Handle different pickle structures
             if isinstance(data, tuple):
                 self.model, self.scaler = data
+                print("[DEBUG] Loaded model and scaler from tuple")
             elif isinstance(data, dict):
                 self.model = data.get('model')
                 self.scaler = data.get('scaler')
+                print("[DEBUG] Loaded model and scaler from dict")
             else:
                 self.model = data
                 self.scaler = None
+                print("[DEBUG] Loaded model only (no scaler)")
             
             print(f"[OK] Model loaded successfully from {self.model_path}")
             print(f"[OK] Model type: {type(self.model)}")
