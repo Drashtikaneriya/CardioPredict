@@ -47,6 +47,8 @@ class ModelPredictor:
         """Load the trained model and scaler from pickle file"""
         try:
             # Debug: Print current directory and model path
+            import sklearn
+            print(f"[DEBUG] Scikit-learn version: {sklearn.__version__}")
             print(f"[DEBUG] Current working directory: {os.getcwd()}")
             print(f"[DEBUG] Script directory: {os.path.dirname(os.path.abspath(__file__))}")
             print(f"[DEBUG] Loading model from: {self.model_path}")

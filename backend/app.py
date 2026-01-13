@@ -21,10 +21,14 @@ CORS(app, resources={
 })
 
 # Initialize model predictor
+model_load_error = None
 try:
     predictor = ModelPredictor()
+    if not predictor.model:
+        model_load_error = "Model logic initialized but model object is None"
     print("[OK] Model predictor initialized successfully")
 except Exception as e:
+    model_load_error = f"{str(e)}\n{traceback.format_exc()}"
     print(f"[ERROR] Failed to initialize model predictor: {e}")
     predictor = None
 
@@ -206,6 +210,7 @@ def debug_info():
         'predictor_initialized': predictor is not None,
         'model_loaded': predictor is not None and predictor.model is not None,
         'scaler_loaded': predictor is not None and predictor.scaler is not None,
+        'model_load_error': model_load_error
     }
     
     if predictor:
